@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="default-light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluir - Gestión de Tareas</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kdam+Thmor+Pro&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Paletas de Temas */
+        :root { --bg-env: #EAEAFE; --bg-main: #FFFFFF; --text-primary: #000000; --text-secondary: #4a4a4a; --accent-primary: #C8FF00; --card-color-1: #E0D7FF; --card-color-2: #FFF3B0; --border-color: #000000; }
+        [data-theme="pastel-dream-light"] { --bg-env: #F0F8FF; --bg-main: #FFFFFF; --text-primary: #333333; --text-secondary: #5f5f5f; --accent-primary: #FFD1DC; --card-color-1: #B0E0E6; --card-color-2: #98FB98; --border-color: #333333; }
+        [data-theme="mint-choco-light"] { --bg-env: #F5FFFA; --bg-main: #FFFFFF; --text-primary: #3D2B1F; --text-secondary: #654321; --accent-primary: #AFE1AF; --card-color-1: #E0D7FF; --card-color-2: #D2B48C; --border-color: #3D2B1F; }
+        [data-theme="autumn-crisp-light"] { --bg-env: #FFF8E1; --bg-main: #FFFFFF; --text-primary: #4E342E; --text-secondary: #6D4C41; --accent-primary: #FFAB91; --card-color-1: #FFCC80; --card-color-2: #A5D6A7; --border-color: #4E342E; }
+        [data-theme="beach-day-light"] { --bg-env: #E0F7FA; --bg-main: #FFFFFF; --text-primary: #004D40; --text-secondary: #00695C; --accent-primary: #FFD180; --card-color-1: #B2EBF2; --card-color-2: #FFF59D; --border-color: #004D40; }
+        [data-theme="deep-space-dark"] { --bg-env: #0C0A1A; --bg-main: #1A1A2E; --text-primary: #E0E0E0; --text-secondary: #a0a0a0; --accent-primary: #E94560; --card-color-1: #16213E; --card-color-2: #0F3460; --border-color: #E0E0E0; }
+        [data-theme="forest-night-dark"] { --bg-env: #1A201A; --bg-main: #2A312A; --text-primary: #E8F5E9; --text-secondary: #a5d6a7; --accent-primary: #A5D6A7; --card-color-1: #384738; --card-color-2: #556B55; --border-color: #E8F5E9; }
+        [data-theme="vampire-dark"] { --bg-env: #121212; --bg-main: #1E1E1E; --text-primary: #EAEAEA; --text-secondary: #b3b3b3; --accent-primary: #CF6679; --card-color-1: #3700B3; --card-color-2: #BB86FC; --border-color: #EAEAEA; }
+        [data-theme="cyberpunk-dark"] { --bg-env: #0d0221; --bg-main: #26174a; --text-primary: #c9f9ff; --text-secondary: #8ef9f3; --accent-primary: #f0f; --card-color-1: #5d31a5; --card-color-2: #077187; --border-color: #c9f9ff; }
+        [data-theme="cozy-autumn-dark"] { --bg-env: #2C1E18; --bg-main: #422D23; --text-primary: #FFE0B2; --text-secondary: #ffcc80; --accent-primary: #FF8A65; --card-color-1: #A1887F; --card-color-2: #795548; --border-color: #FFE0B2; }
+
+        html { scroll-behavior: smooth; }
+        body { background-color: var(--bg-env); font-family: 'Inter', sans-serif; color: var(--text-primary); transition: background-color 0.3s ease, color 0.3s ease; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        .font-heading { font-family: 'Kdam Thmor Pro', sans-serif; }
+        .neo-brutalist { border: 2px solid var(--border-color); box-shadow: 4px 4px 0px var(--border-color); transition: all 0.15s ease-out, background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; border-radius: 0.5rem; }
+        .neo-brutalist-flat { border: 2px solid var(--border-color); border-radius: 0.5rem; transition: background-color 0.3s ease, border-color 0.3s ease; }
+        .btn-primary { background-color: var(--accent-primary); }
+        .btn-primary:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px var(--border-color); }
+        .btn-secondary { background-color: var(--bg-main); }
+        .btn-secondary:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px var(--border-color); }
+        .task-card:hover { transform: translate(-4px, -4px); box-shadow: 8px 8px 0px var(--border-color); }
+        .input-field { background-color: var(--bg-main); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 0.5rem; padding: 0.75rem 1rem; width: 100%; transition: background-color 0.3s ease, border-color 0.3s ease; }
+        .input-field:focus { outline: none; box-shadow: 0 0 0 3px var(--accent-primary); }
+        .custom-checkbox { appearance: none; background-color: var(--bg-main); width: 1.5rem; height: 1.5rem; border: 2px solid var(--border-color); border-radius: 0.25rem; cursor: pointer; display: grid; place-content: center; flex-shrink: 0; transition: background-color 0.3s ease, border-color 0.3s ease; }
+        .custom-checkbox::before { content: ''; width: 0.75rem; height: 0.75rem; transform: scale(0); transition: 120ms transform ease-in-out; box-shadow: inset 1em 1em var(--text-primary); transform-origin: bottom left; clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%); }
+        .custom-checkbox:checked { background-color: var(--accent-primary); }
+        .custom-checkbox:checked::before { transform: scale(1); }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 50; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-content { transform: scale(0.9); transition: transform 0.3s ease, background-color 0.3s ease; }
+        .modal-overlay.active .modal-content { background-color: var(--bg-main); transform: scale(1); }
+        .view { display: none; animation-duration: 0.4s; animation-fill-mode: forwards; }
+        .view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-10px); } }
+        .view.is-entering { animation-name: fadeIn; }
+        .view.is-exiting { animation-name: fadeOut; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-env); }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+        .text-secondary { color: var(--text-secondary); }
+        .mobile-nav-btn.active, .mobile-nav-btn.active svg { color: var(--accent-primary) !important; }
+        #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-env); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; opacity: 1; transition: opacity 0.5s ease-out; }
+        #splash-screen.is-fading { opacity: 0; pointer-events: none; }
+        .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; border: 2px solid var(--border-color); }
+        .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; border: 2px solid var(--border-color); }
+        input:checked + .slider { background-color: var(--accent-primary); }
+        input:checked + .slider:before { transform: translateX(26px); }
+    </style>
+</head>
+<body class="p-4 md:p-8 pb-28 md:pb-8">
+
+    <div id="splash-screen">
+        <svg class="w-24 h-24 md:w-32 md:h-32 mb-4" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="25" y="25" width="50" height="50" class="neo-brutalist-flat" style="fill: var(--accent-primary); border-width: 4px;"/>
+        </svg>
+        <h1 class="font-heading text-4xl md:text-5xl uppercase">Fluir</h1>
+    </div>
+
+    <main id="app-container" class="max-w-7xl mx-auto">
+        <section id="welcome-view" class="view active">
+            <div class="min-h-[80vh] flex flex-col items-center justify-center text-center p-4">
+                <svg class="w-24 h-24 md:w-32 md:h-32 mb-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="25" y="25" width="50" height="50" class="neo-brutalist-flat" style="fill: var(--accent-primary); border-width: 4px;"/>
+                </svg>
+                <h1 class="font-heading text-4xl md:text-6xl lg:text-7xl uppercase mb-4 max-w-4xl mx-auto">Transforma tu productividad con Fluir</h1>
+                <p class="text-lg md:text-xl mb-12 max-w-2xl mx-auto text-secondary">Una experiencia de gestión de tareas con una estética Neo-Brutalista personalizable.</p>
+                <button id="enter-app-btn" class="neo-brutalist btn-primary font-bold text-xl md:text-2xl px-12 py-4">ENTRAR</button>
+            </div>
+        </section>
+
+        <section id="dashboard-view" class="view">
+            <header class="hidden md:flex justify-between items-center mb-8 md:mb-12 p-4 neo-brutalist-flat" style="background-color: var(--bg-main);">
+                <h1 class="font-heading text-3xl md:text-4xl uppercase">Dashboard</h1>
+                <div class="flex items-center gap-2 md:gap-4">
+                    <button id="calendar-nav-btn-desktop" title="Ver Calendario" class="neo-brutalist btn-secondary p-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></button>
+                    <button id="settings-nav-btn-desktop" title="Configuración" class="neo-brutalist btn-secondary p-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-4.44a2 2 0 0 0-2 2v.77a2 2 0 0 1-1.11 1.79l-1.44.82a2 2 0 0 0-1.11 1.79v4.86a2 2 0 0 0 1.11 1.79l1.44.82a2 2 0 0 1 1.11 1.79v.77a2 2 0 0 0 2 2h4.44a2 2 0 0 0 2-2v-.77a2 2 0 0 1 1.11-1.79l1.44-.82a2 2 0 0 0 1.11-1.79v-4.86a2 2 0 0 0-1.11-1.79l-1.44-.82a2 2 0 0 1-1.11-1.79V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
+                    <button id="add-task-nav-btn" class="neo-brutalist btn-primary font-bold flex items-center gap-2 px-4 py-2"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>Añadir Proyecto</button>
+                </div>
+            </header>
+            <h1 class="font-heading text-3xl uppercase mb-6 md:hidden">Dashboard</h1>
+            
+            <div id="urgent-tasks-section" class="mb-12"><h2 class="font-heading text-2xl uppercase mb-4">Tareas Urgentes</h2><div id="urgent-tasks-container" class="space-y-4"></div></div>
+            <div id="recent-tasks-section" class="mb-12"><h2 class="font-heading text-2xl uppercase mb-4">Añadidos Recientemente</h2><div id="recent-tasks-container" class="space-y-4"></div></div>
+            <div id="all-projects-section" class="mb-12"><h2 class="font-heading text-2xl uppercase mb-4">Todos los Proyectos</h2><div id="all-projects-container" class="space-y-4"></div></div>
+            <div id="completed-tasks-section" class="hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="font-heading text-2xl uppercase">Completadas</h2>
+                    <button id="toggle-completed-btn" class="neo-brutalist btn-secondary text-sm font-bold px-3 py-1.5">Mostrar</button>
+                </div>
+                <div id="completed-tasks-container" class="space-y-4 hidden"></div>
+            </div>
+        </section>
+
+        <section id="details-view" class="view">
+             <div class="p-4 md:p-6 neo-brutalist-flat" style="background-color: var(--bg-main);">
+                <header class="flex justify-between items-center mb-6 pb-4 border-b-2" style="border-color: var(--border-color);"><button id="back-to-dashboard-btn" class="neo-brutalist btn-secondary font-bold flex items-center gap-2 px-4 py-2"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>Volver</button></header>
+                <div id="task-details-content"></div>
+            </div>
+        </section>
+
+        <section id="form-view" class="view">
+             <div class="p-4 md:p-6 neo-brutalist-flat max-w-3xl mx-auto" style="background-color: var(--bg-main);">
+                 <header class="flex justify-between items-center mb-6"><h1 id="form-title" class="font-heading text-3xl md:text-4xl uppercase">Nuevo Proyecto</h1><button id="cancel-form-btn" class="neo-brutalist btn-secondary font-bold px-4 py-2">Cancelar</button></header>
+                <form id="task-form">
+                    <input type="hidden" id="task-id-input">
+                    <div class="mb-6"><label for="task-title" class="font-bold block mb-2">Título del Proyecto *</label><input type="text" id="task-title" class="input-field" required></div>
+                    <div class="mb-6"><label for="task-description" class="font-bold block mb-2">Descripción</label><textarea id="task-description" rows="4" class="input-field"></textarea></div>
+                    <div class="mb-6"><label for="task-due-date" class="font-bold block mb-2">Fecha y Hora de Entrega</label><input type="datetime-local" id="task-due-date" class="input-field"></div>
+                    <div class="mb-6"><label class="font-bold block mb-2">Color de la Tarjeta</label><div class="flex gap-4"><div class="flex items-center gap-2"><input type="radio" id="color-1" name="task-color" value="var(--card-color-1)" class="custom-checkbox" checked><label for="color-1" class="p-2 rounded" style="background-color: var(--card-color-1); border: 2px solid var(--border-color);">Color 1</label></div><div class="flex items-center gap-2"><input type="radio" id="color-2" name="task-color" value="var(--card-color-2)" class="custom-checkbox"><label for="color-2" class="p-2 rounded" style="background-color: var(--card-color-2); border: 2px solid var(--border-color);">Color 2</label></div></div></div>
+                    <div class="mb-8"><h3 class="font-bold mb-2">Subtareas</h3><div id="subtasks-form-list" class="space-y-2 mb-3"></div><button type="button" id="add-subtask-form-btn" class="neo-brutalist btn-secondary text-sm font-bold px-3 py-1.5">+ Añadir subtarea</button></div>
+                    <button type="submit" id="save-task-btn" class="w-full neo-brutalist btn-primary font-bold text-xl py-3">Crear Proyecto</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="settings-view" class="view">
+            <div class="p-4 md:p-6 neo-brutalist-flat max-w-4xl mx-auto" style="background-color: var(--bg-main);">
+                <header class="hidden md:flex justify-between items-center mb-8 pb-4 border-b-2" style="border-color: var(--border-color);"><h1 class="font-heading text-3xl md:text-4xl uppercase">Configuración</h1><button id="back-to-dashboard-from-settings-btn" class="neo-brutalist btn-secondary font-bold px-4 py-2">Cerrar</button></header>
+                <h1 class="font-heading text-3xl uppercase mb-6 md:hidden">Configuración</h1>
+                <div class="mb-12">
+                    <h2 class="font-heading text-2xl uppercase mb-4">Apariencia</h2>
+                    <div class="flex justify-between items-center mb-8"><span class="font-bold">Modo Inmersivo (Pantalla Completa)</span><label class="switch"><input type="checkbox" id="immersive-mode-switch"><span class="slider"></span></label></div>
+                    <div id="theme-selector" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4"></div>
+                </div>
+                <div class="mb-12">
+                    <h2 class="font-heading text-2xl uppercase mb-4">Crear Copia de Seguridad</h2>
+                    <button id="export-btn" class="w-full neo-brutalist btn-secondary font-bold text-lg py-3">Exportar a archivo .flu</button><p class="text-sm text-secondary mt-2">Guarda todas tus tareas en un archivo para importarlas más tarde.</p>
+                </div>
+                <div class="mb-12">
+                    <h2 class="font-heading text-2xl uppercase mb-4">Restaurar Copia de Seguridad</h2>
+                    <button id="import-btn" class="w-full neo-brutalist btn-secondary font-bold text-lg py-3">Importar desde .flu</button><input type="file" id="import-file-input" accept=".flu,.json" class="hidden"><p class="text-sm text-secondary mt-2">Reemplaza tus tareas actuales con las de un archivo de respaldo.</p>
+                </div>
+                <div>
+                    <h2 class="font-heading text-2xl uppercase mb-4 text-red-500">Zona de Peligro</h2>
+                    <button id="reset-app-btn" class="w-full neo-brutalist font-bold text-lg py-3 border-red-500 text-red-700" style="background-color: #fee2e2;">Reiniciar Aplicación</button><p class="text-sm text-secondary mt-2">Borra permanentemente todas tus tareas y configuraciones.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="calendar-view" class="view">
+            <div class="p-4 md:p-6 neo-brutalist-flat max-w-5xl mx-auto" style="background-color: var(--bg-main);">
+                 <header class="hidden md:flex justify-between items-center mb-6"><h1 id="calendar-title-desktop" class="font-heading text-2xl md:text-3xl uppercase">Calendario</h1><div class="flex items-center gap-2"><button id="calendar-prev-month-btn" class="neo-brutalist btn-secondary font-bold p-2">&lt;</button><button id="calendar-next-month-btn" class="neo-brutalist btn-secondary font-bold p-2">&gt;</button><button id="back-to-dashboard-from-calendar-btn" class="ml-4 neo-brutalist btn-secondary font-bold px-4 py-2">Cerrar</button></div></header>
+                <div class="flex justify-between items-center mb-6 md:hidden"><h1 id="calendar-title-mobile" class="font-heading text-3xl uppercase">Calendario</h1><div><button id="calendar-prev-month-btn-mobile" class="neo-brutalist btn-secondary font-bold p-2">&lt;</button><button id="calendar-next-month-btn-mobile" class="neo-brutalist btn-secondary font-bold p-2">&gt;</button></div></div>
+                <div id="calendar-grid" class="grid grid-cols-7 gap-1 text-center font-bold mb-4"></div>
+                <div id="calendar-tasks-list"><h3 class="font-heading text-xl uppercase mb-2">Tareas del día:</h3><div id="calendar-tasks-container" class="space-y-2"><p class="text-secondary">Selecciona un día para ver las tareas.</p></div></div>
+            </div>
+        </section>
+    </main>
+    
+    <div id="subtask-modal" class="modal-overlay">
+        <div class="modal-content neo-brutalist w-11/12 max-w-md p-6"><h2 class="font-heading text-2xl uppercase mb-4">Añadir Subtarea</h2><input type="text" id="subtask-input" class="input-field mb-4" placeholder="Descripción de la subtarea..."><div class="flex gap-4"><button id="confirm-add-subtask-btn" class="flex-1 neo-brutalist btn-primary font-bold py-2">Añadir</button><button id="cancel-add-subtask-btn" class="flex-1 neo-brutalist btn-secondary font-bold py-2">Cancelar</button></div></div>
+    </div>
+
+    <nav id="mobile-nav" class="md:hidden fixed bottom-0 left-0 right-0 h-20 flex items-center justify-around p-2 border-t-2" style="background-color: var(--bg-main); border-color: var(--border-color); z-index: 40;"><button id="mobile-dashboard-btn" class="mobile-nav-btn flex flex-col items-center justify-center text-center w-1/4"><svg class="w-7 h-7 mb-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span class="text-xs font-bold">Inicio</span></button><button id="mobile-calendar-btn" class="mobile-nav-btn flex flex-col items-center justify-center text-center w-1/4"><svg class="w-7 h-7 mb-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg><span class="text-xs font-bold">Calendario</span></button><div class="w-1/4 flex justify-center"><button id="mobile-add-task-btn" class="neo-brutalist btn-primary w-16 h-16 rounded-full flex items-center justify-center -mt-8"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button></div><button id="mobile-settings-btn" class="mobile-nav-btn flex flex-col items-center justify-center text-center w-1/4"><svg class="w-7 h-7 mb-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-4.44a2 2 0 0 0-2 2v.77a2 2 0 0 1-1.11 1.79l-1.44.82a2 2 0 0 0-1.11 1.79v4.86a2 2 0 0 0 1.11 1.79l1.44.82a2 2 0 0 1 1.11 1.79v.77a2 2 0 0 0 2 2h4.44a2 2 0 0 0 2-2v-.77a2 2 0 0 1 1.11-1.79l1.44-.82a2 2 0 0 0 1.11-1.79v-4.86a2 2 0 0 0-1.11-1.79l-1.44-.82a2 2 0 0 1-1.11-1.79V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg><span class="text-xs font-bold">Ajustes</span></button></nav>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // SELECTORES DE ELEMENTOS
+        const splashScreen = document.getElementById('splash-screen');
+        const views = { welcome: document.getElementById('welcome-view'), dashboard: document.getElementById('dashboard-view'), details: document.getElementById('details-view'), form: document.getElementById('form-view'), settings: document.getElementById('settings-view'), calendar: document.getElementById('calendar-view') };
+        const buttons = {
+            enterApp: document.getElementById('enter-app-btn'), addTaskNav: document.getElementById('add-task-nav-btn'), backToDashboard: document.getElementById('back-to-dashboard-btn'),
+            cancelForm: document.getElementById('cancel-form-btn'), saveTask: document.getElementById('save-task-btn'), exportData: document.getElementById('export-btn'), importData: document.getElementById('import-btn'),
+            resetApp: document.getElementById('reset-app-btn'), settingsNavDesktop: document.getElementById('settings-nav-btn-desktop'), calendarNavDesktop: document.getElementById('calendar-nav-btn-desktop'),
+            backToDashboardFromSettings: document.getElementById('back-to-dashboard-from-settings-btn'), backToDashboardFromCalendar: document.getElementById('back-to-dashboard-from-calendar-btn'),
+            calendarPrevMonth: document.getElementById('calendar-prev-month-btn'), calendarNextMonth: document.getElementById('calendar-next-month-btn'),
+            calendarPrevMonthMobile: document.getElementById('calendar-prev-month-btn-mobile'), calendarNextMonthMobile: document.getElementById('calendar-next-month-btn-mobile'),
+            mobileDashboard: document.getElementById('mobile-dashboard-btn'), mobileCalendar: document.getElementById('mobile-calendar-btn'), mobileAddTask: document.getElementById('mobile-add-task-btn'), mobileSettings: document.getElementById('mobile-settings-btn'),
+            toggleCompleted: document.getElementById('toggle-completed-btn')
+        };
+        const inputs = { importFile: document.getElementById('import-file-input'), immersiveModeSwitch: document.getElementById('immersive-mode-switch') };
+        const containers = {
+            urgentTasks: document.getElementById('urgent-tasks-container'), recentTasks: document.getElementById('recent-tasks-container'), allProjects: document.getElementById('all-projects-container'),
+            completedTasks: document.getElementById('completed-tasks-container'), completedTasksSection: document.getElementById('completed-tasks-section'),
+            taskDetails: document.getElementById('task-details-content'), subtasksFormList: document.getElementById('subtasks-form-list'), themeSelector: document.getElementById('theme-selector'),
+            calendarGrid: document.getElementById('calendar-grid'), calendarTitleDesktop: document.getElementById('calendar-title-desktop'), calendarTitleMobile: document.getElementById('calendar-title-mobile'),
+            calendarTasks: document.getElementById('calendar-tasks-container')
+        };
+        const formElements = {
+            form: document.getElementById('task-form'), formTitle: document.getElementById('form-title'), taskIdInput: document.getElementById('task-id-input'), title: document.getElementById('task-title'),
+            description: document.getElementById('task-description'), dueDate: document.getElementById('task-due-date'), color1: document.getElementById('color-1'), color2: document.getElementById('color-2')
+        };
+        const modal = { element: document.getElementById('subtask-modal'), input: document.getElementById('subtask-input'), confirmBtn: document.getElementById('confirm-add-subtask-btn'), cancelBtn: document.getElementById('cancel-add-subtask-btn'), addBtnForm: document.getElementById('add-subtask-form-btn') };
+
+        // ESTADO DE LA APLICACIÓN
+        let state = { tasks: [], currentView: 'welcome', selectedTaskId: null, tempSubtasks: [], calendarDate: new Date() };
+        let countdownInterval = null;
+        let subtaskModalContext = { isFormContext: false, taskId: null };
+        const themes = [ { id: 'default-light', name: 'Original' }, { id: 'pastel-dream-light', name: 'Pastel' }, { id: 'mint-choco-light', name: 'Menta' }, { id: 'autumn-crisp-light', name: 'Otoño' }, { id: 'beach-day-light', name: 'Playa' }, { id: 'deep-space-dark', name: 'Espacio' }, { id: 'forest-night-dark', name: 'Bosque' }, { id: 'vampire-dark', name: 'Vampiro' }, { id: 'cyberpunk-dark', name: 'Cyber' }, { id: 'cozy-autumn-dark', name: 'Otoño Osc' }];
+
+        // --- LÓGICA DE DATOS Y CONFIGURACIÓN ---
+        function loadData() { const savedTasks = localStorage.getItem('fluir-tasks'); if (savedTasks) state.tasks = JSON.parse(savedTasks); }
+        function saveData() { localStorage.setItem('fluir-tasks', JSON.stringify(state.tasks)); }
+        function exportData() { if (state.tasks.length === 0) return alert("No hay datos para exportar."); const dataStr = JSON.stringify(state.tasks, null, 2); const dataBlob = new Blob([dataStr], {type: "application/json"}); const url = URL.createObjectURL(dataBlob); const a = document.createElement('a'); a.href = url; a.download = `fluir_backup_${new Date().toISOString().split('T')[0]}.flu`; a.click(); URL.revokeObjectURL(url); }
+        function importData(event) { const file = event.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { try { const importedTasks = JSON.parse(e.target.result); if (!Array.isArray(importedTasks)) throw new Error("Formato inválido."); if (confirm("¿Quieres sobrescribir tus tareas actuales?")) { state.tasks = importedTasks; saveData(); renderDashboard(); navigateTo('dashboard'); alert("¡Datos importados!"); } } catch (error) { alert(`Error al importar: ${error.message}`); } }; reader.readAsText(file); event.target.value = ''; }
+        function applyTheme(themeId) { document.documentElement.dataset.theme = themeId; localStorage.setItem('fluir-theme', themeId); const style = getComputedStyle(document.documentElement); document.querySelector('label[for="color-1"]').style.backgroundColor = style.getPropertyValue('--card-color-1').trim(); document.querySelector('label[for="color-1"]').style.borderColor = style.getPropertyValue('--border-color').trim(); document.querySelector('label[for="color-2"]').style.backgroundColor = style.getPropertyValue('--card-color-2').trim(); document.querySelector('label[for="color-2"]').style.borderColor = style.getPropertyValue('--border-color').trim(); }
+        function resetApp() { if(confirm("¡ADVERTENCIA!\n¿Estás seguro de que quieres reiniciar la aplicación?")){ localStorage.clear(); location.reload(); } }
+
+        // --- LÓGICA DE MODO INMERSIVO ---
+        function enterFullscreen() { if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen(); }
+        function exitFullscreen() { if (document.exitFullscreen) document.exitFullscreen(); }
+        function toggleImmersiveMode(force) {
+            const isImmersive = force !== undefined ? force : inputs.immersiveModeSwitch.checked;
+            if (isImmersive) enterFullscreen(); else exitFullscreen();
+            localStorage.setItem('fluir-immersive', isImmersive);
+            inputs.immersiveModeSwitch.checked = isImmersive;
+        }
+
+        // --- LÓGICA DE NAVEGACIÓN ---
+        function navigateTo(viewName) {
+            if (state.currentView === 'dashboard' && countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+            const currentViewElement = views[state.currentView]; const nextViewElement = views[viewName];
+            if (currentViewElement && nextViewElement) {
+                currentViewElement.classList.add('is-exiting');
+                setTimeout(() => {
+                    currentViewElement.classList.remove('active', 'is-exiting'); currentViewElement.style.display = 'none';
+                    nextViewElement.style.display = 'block'; nextViewElement.classList.add('active', 'is-entering');
+                    setTimeout(() => nextViewElement.classList.remove('is-entering'), 400);
+                    state.currentView = viewName; updateMobileNavActiveState(viewName); window.scrollTo(0, 0);
+                    if (viewName === 'dashboard') startCountdownTimers();
+                }, 400);
+            }
+        }
+        function updateMobileNavActiveState(activeView) { const mapping = { dashboard: buttons.mobileDashboard, calendar: buttons.mobileCalendar, settings: buttons.mobileSettings }; Object.values(mapping).forEach(btn => btn.classList.remove('active')); if (mapping[activeView]) mapping[activeView].classList.add('active'); }
+        
+        // --- LÓGICA DEL CONTADOR ---
+        function updateCountdownTimers() {
+            document.querySelectorAll('.countdown-timer').forEach(timer => {
+                const dueDate = new Date(timer.dataset.dueDate); const now = new Date(); const diff = dueDate - now;
+                if (diff <= 0) { timer.innerHTML = '<span class="text-red-500 font-bold">Vencido</span>'; return; }
+                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((diff % (1000 * 60)) / 1000);
+                timer.textContent = `${d > 0 ? d + 'd ' : ''}${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            });
+        }
+        function startCountdownTimers() { if (!countdownInterval) { updateCountdownTimers(); countdownInterval = setInterval(updateCountdownTimers, 1000); } }
+
+        // --- LÓGICA DE RENDERIZADO ---
+        function createProgressCircle(percentage, size = 40) { const sW = 5; const r = (size / 2) - sW; const c = 2 * Math.PI * r; const o = c - (percentage / 100) * c; const fg = "var(--text-primary)"; const bg = "var(--text-secondary)"; return `<svg class="w-${size/4*3} h-${size/4*3}" viewBox="0 0 ${size} ${size}"><circle stroke-width="${sW}" stroke="${bg}" fill="transparent" r="${r}" cx="${size/2}" cy="${size/2}"/><circle stroke-width="${sW}" stroke-dasharray="${c}" stroke-dashoffset="${o}" stroke-linecap="round" stroke="${fg}" fill="transparent" r="${r}" cx="${size/2}" cy="${size/2}" style="transition: stroke-dashoffset 0.5s ease; transform: rotate(-90deg); transform-origin: center;"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" class="text-xs font-bold" style="fill: ${fg};">${Math.round(percentage)}%</text></svg>`; }
+        
+        function createTaskCard(task) {
+            let progress = 0; let statusText = '';
+            if (task.subtasks.length > 0) { const completedSubtasks = task.subtasks.filter(st => st.completed).length; progress = (completedSubtasks / task.subtasks.length) * 100; statusText = `${completedSubtasks}/${task.subtasks.length}`; }
+            else { progress = task.completed ? 100 : 0; statusText = task.completed ? '¡Hecho!' : 'Simple'; }
+            const card = document.createElement('div'); card.className = 'task-card neo-brutalist p-4 flex justify-between items-center cursor-pointer'; card.style.backgroundColor = task.color; card.dataset.taskId = task.id;
+            let timeInfoHTML = '';
+            if(task.dueDate && !task.completed) {
+                const dueDateFormatted = new Date(task.dueDate).toLocaleString('es-ES', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+                timeInfoHTML = `<p class="text-sm text-secondary">Entrega: ${dueDateFormatted}</p><p class="text-sm font-semibold countdown-timer" data-due-date="${task.dueDate}"></p>`;
+            } else if (task.dueDate) {
+                const dueDateFormatted = new Date(task.dueDate).toLocaleString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+                timeInfoHTML = `<p class="text-sm text-secondary">Completado el ${dueDateFormatted}</p>`;
+            } else { timeInfoHTML = `<p class="text-sm text-secondary">Sin fecha de entrega</p>`; }
+            card.innerHTML = `<div class="flex-grow mr-4 min-w-0"><h3 class="font-bold text-lg break-words ${task.completed ? 'line-through text-secondary' : ''}">${task.title}</h3>${timeInfoHTML}</div><div class="flex-shrink-0 flex flex-col items-center">${createProgressCircle(progress, 50)}<span class="text-xs font-semibold mt-1">${statusText}</span></div>`;
+            card.addEventListener('click', () => { state.selectedTaskId = task.id; renderTaskDetails(); navigateTo('details'); });
+            return card;
+        }
+
+        function renderDashboard() {
+            const activeTasks = state.tasks.filter(t => !t.completed);
+            const completedTasks = state.tasks.filter(t => t.completed);
+            containers.urgentTasks.innerHTML = ''; containers.recentTasks.innerHTML = ''; containers.allProjects.innerHTML = ''; containers.completedTasks.innerHTML = '';
+            const now = new Date(); const threeDaysFromNow = new Date(); threeDaysFromNow.setDate(now.getDate() + 3);
+            const urgentTasks = activeTasks.filter(t => t.dueDate && new Date(t.dueDate) >= now && new Date(t.dueDate) <= threeDaysFromNow).sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate));
+            if (urgentTasks.length > 0) urgentTasks.forEach(task => containers.urgentTasks.appendChild(createTaskCard(task))); else containers.urgentTasks.innerHTML = getEmptyStateHTML("¡Todo tranquilo!", "No tienes tareas urgentes.");
+            const recentTasks = activeTasks.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 3);
+            if (recentTasks.length > 0) recentTasks.forEach(task => containers.recentTasks.appendChild(createTaskCard(task))); else containers.recentTasks.innerHTML = getEmptyStateHTML("Empecemos...", "Aquí aparecerán tus proyectos activos más recientes.");
+            if (activeTasks.length > 0) activeTasks.sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt)).forEach(task => containers.allProjects.appendChild(createTaskCard(task))); else containers.allProjects.innerHTML = getEmptyStateHTML("Crea tu primer proyecto", "Usa el botón '+' para empezar.");
+            if (completedTasks.length > 0) {
+                containers.completedTasksSection.classList.remove('hidden');
+                completedTasks.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)).forEach(task => containers.completedTasks.appendChild(createTaskCard(task)));
+            } else { containers.completedTasksSection.classList.add('hidden'); }
+            startCountdownTimers();
+        }
+        
+        function renderTaskDetails() { const task = state.tasks.find(t => t.id === state.selectedTaskId); if (!task) return; let progress = 0; if (task.subtasks.length > 0) { const completed = task.subtasks.filter(st=>st.completed).length; progress = (completed / task.subtasks.length) * 100; } else { progress = task.completed ? 100 : 0; } const commonHeader = `<div class="flex items-start justify-between"><h2 class="font-heading text-3xl md:text-5xl uppercase mb-2 break-words ${task.completed ? 'line-through text-secondary' : ''}">${task.title}</h2><div class="flex-shrink-0 ml-4">${createProgressCircle(progress, 80)}</div></div><div class="text-sm text-secondary mb-6"><span>Creado: ${new Date(task.createdAt).toLocaleDateString()}</span> | <span>Entrega: ${task.dueDate ? new Date(task.dueDate).toLocaleString('es-ES', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit'}) : 'Sin fecha'}</span></div><p class="mb-8">${task.description || '<em>Sin descripción.</em>'}</p>`; if (task.subtasks.length > 0) { const comp = task.subtasks.filter(st => st.completed).length; const total = task.subtasks.length; const subsHTML = task.subtasks.map(st => `<div class="flex items-center gap-4 p-3 border-b-2" style="border-color: var(--border-color);"><input type="checkbox" id="subtask-${st.id}" data-subtask-id="${st.id}" class="custom-checkbox" ${st.completed ? 'checked' : ''}><label for="subtask-${st.id}" class="flex-1 ${st.completed ? 'line-through text-secondary' : ''}">${st.text}</label></div>`).join(''); containers.taskDetails.innerHTML = commonHeader + `<h3 class="font-heading text-xl uppercase mb-4">Progreso (${comp}/${total})</h3><div id="subtasks-details-list">${subsHTML}</div><button id="add-subtask-details-btn" class="mt-4 neo-brutalist btn-secondary text-sm font-bold px-3 py-1.5">+ Añadir subtarea</button>`; document.querySelectorAll('#subtasks-details-list input[type="checkbox"]').forEach(cb => { cb.addEventListener('change', e => { const subtask = task.subtasks.find(st => st.id === e.target.dataset.subtaskId); if(subtask) { subtask.completed = e.target.checked; task.completed = task.subtasks.every(st => st.completed); saveData(); renderTaskDetails(); } }); }); document.getElementById('add-subtask-details-btn').addEventListener('click', () => { openSubtaskModal(false, task.id); }); } else { containers.taskDetails.innerHTML = commonHeader + `<div class="mt-6 border-t-2 pt-6" style="border-color: var(--border-color);"><label for="complete-task-checkbox" class="flex items-center gap-4 cursor-pointer"><input type="checkbox" id="complete-task-checkbox" class="custom-checkbox w-8 h-8" ${task.completed ? 'checked' : ''}><span class="text-xl font-bold">Marcar como completada</span></label></div>`; document.getElementById('complete-task-checkbox').addEventListener('change', e => { task.completed = e.target.checked; saveData(); renderTaskDetails(); }); } }
+        
+        function renderFormSubtasks() { containers.subtasksFormList.innerHTML = state.tempSubtasks.map((st, i) => `<div class="flex items-center justify-between p-2 neo-brutalist-flat" style="background-color: var(--bg-env);"><span class="text-secondary">${st.text}</span><button type="button" class="font-bold text-red-500 px-2" data-index="${i}">&times;</button></div>`).join(''); containers.subtasksFormList.querySelectorAll('button').forEach(btn => btn.addEventListener('click', e => { state.tempSubtasks.splice(e.target.dataset.index, 1); renderFormSubtasks(); })); }
+        function getEmptyStateHTML(title, message) { return `<div class="col-span-full text-center p-8 md:p-12 neo-brutalist-flat" style="background-color: var(--bg-main);"><h3 class="font-heading text-xl uppercase">${title}</h3><p class="mt-1 text-sm text-secondary">${message}</p></div>`; }
+        function renderCalendar() { containers.calendarGrid.innerHTML = ''; const d = state.calendarDate; const y = d.getFullYear(); const m = d.getMonth(); const t = d.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }).toUpperCase(); containers.calendarTitleDesktop.textContent = t; containers.calendarTitleMobile.textContent = t; const fD = new Date(y, m, 1).getDay(); const dM = new Date(y, m + 1, 0).getDate(); ['D', 'L', 'M', 'X', 'J', 'V', 'S'].forEach(day => containers.calendarGrid.innerHTML += `<div class="p-2 border-b-2" style="border-color: var(--border-color);">${day}</div>`); const tD = {}; state.tasks.forEach(task => { if(task.dueDate){ const tDate = task.dueDate.split('T')[0]; if(!tD[tDate]) tD[tDate] = []; tD[tDate].push(task); }}); for (let i = 0; i < (fD === 0 ? 6 : fD - 1); i++) containers.calendarGrid.innerHTML += `<div></div>`; for (let day = 1; day <= dM; day++) { const el = document.createElement('div'); const fDate = `${y}-${String(m + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`; el.className = 'p-2 cursor-pointer rounded-full relative hover:bg-gray-200'; el.textContent = day; el.dataset.date = fDate; if (tD[fDate]) { el.innerHTML += `<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full" style="background-color: var(--accent-primary);"></span>`; el.classList.add('font-extrabold'); } el.addEventListener('click', () => renderTasksForDay(fDate, tD[fDate] || [])); containers.calendarGrid.appendChild(el); } }
+        function renderTasksForDay(dateStr, tasks) { const date = new Date(dateStr + 'T00:00:00'); containers.calendarTasks.innerHTML = `<h3 class="font-heading text-xl uppercase mb-2">Tareas para el ${date.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}</h3>`; if(tasks.length > 0) { tasks.forEach(task => { const el = document.createElement('div'); el.className = 'p-3 neo-brutalist-flat cursor-pointer'; el.style.backgroundColor = task.color; el.textContent = task.title; el.addEventListener('click', () => { state.selectedTaskId = task.id; renderTaskDetails(); navigateTo('details'); }); containers.calendarTasks.appendChild(el); }); } else { containers.calendarTasks.innerHTML += `<p class="text-secondary">No hay tareas programadas.</p>`; } }
+        
+        function openSubtaskModal(isFormCtx, taskId = null) { subtaskModalContext = { isFormContext: isFormCtx, taskId }; modal.element.classList.add('active'); modal.input.value = ''; modal.input.focus(); }
+        function closeSubtaskModal() { modal.element.classList.remove('active'); }
+        function handleAddSubtask() { const text = modal.input.value.trim(); if (!text) return; if (subtaskModalContext.isFormContext) { state.tempSubtasks.push({ text, completed: false }); renderFormSubtasks(); } else { const task = state.tasks.find(t => t.id === subtaskModalContext.taskId); if (task) { task.subtasks.push({ id: `sub-${Date.now()}`, text, completed: false }); saveData(); renderTaskDetails(); } } closeSubtaskModal(); }
+        function openNewTaskForm() { state.selectedTaskId = null; formElements.form.reset(); formElements.formTitle.textContent = 'Nuevo Proyecto'; buttons.saveTask.textContent = 'Crear Proyecto'; state.tempSubtasks = []; renderFormSubtasks(); navigateTo('form'); }
+        
+        // --- EVENT HANDLERS ---
+        buttons.enterApp.addEventListener('click', () => { renderDashboard(); navigateTo('dashboard'); });
+        buttons.addTaskNav.addEventListener('click', openNewTaskForm);
+        buttons.mobileAddTask.addEventListener('click', openNewTaskForm);
+        buttons.backToDashboard.addEventListener('click', () => { renderDashboard(); navigateTo('dashboard'); });
+        buttons.cancelForm.addEventListener('click', () => { renderDashboard(); navigateTo('dashboard'); });
+        formElements.form.addEventListener('submit', (e) => { e.preventDefault(); const title = formElements.title.value.trim(); if (!title) return; const taskData = { id: `task-${Date.now()}`, title, description: formElements.description.value.trim(), dueDate: formElements.dueDate.value, color: formElements.color1.checked ? 'var(--card-color-1)' : 'var(--card-color-2)', subtasks: state.tempSubtasks.map((st, i) => ({ ...st, id: `sub-${Date.now()}-${i}`, completed: false })), createdAt: new Date().toISOString(), completed: false }; state.tasks.push(taskData); saveData(); renderDashboard(); navigateTo('dashboard'); });
+        buttons.calendarNavDesktop.addEventListener('click', () => { renderCalendar(); navigateTo('calendar'); });
+        buttons.settingsNavDesktop.addEventListener('click', () => navigateTo('settings'));
+        buttons.mobileDashboard.addEventListener('click', () => navigateTo('dashboard'));
+        buttons.mobileCalendar.addEventListener('click', () => { renderCalendar(); navigateTo('calendar'); });
+        buttons.mobileSettings.addEventListener('click', () => navigateTo('settings'));
+        buttons.backToDashboardFromSettings.addEventListener('click', () => { renderDashboard(); navigateTo('dashboard'); });
+        buttons.backToDashboardFromCalendar.addEventListener('click', () => { renderDashboard(); navigateTo('dashboard'); });
+        buttons.importData.addEventListener('click', () => inputs.importFile.click());
+        inputs.importFile.addEventListener('change', importData);
+        buttons.exportData.addEventListener('click', exportData);
+        buttons.resetApp.addEventListener('click', resetApp);
+        const prevMonthAction = () => { state.calendarDate.setMonth(state.calendarDate.getMonth() - 1); renderCalendar(); };
+        const nextMonthAction = () => { state.calendarDate.setMonth(state.calendarDate.getMonth() + 1); renderCalendar(); };
+        buttons.calendarPrevMonth.addEventListener('click', prevMonthAction);
+        buttons.calendarNextMonth.addEventListener('click', nextMonthAction);
+        buttons.calendarPrevMonthMobile.addEventListener('click', prevMonthAction);
+        buttons.calendarNextMonthMobile.addEventListener('click', nextMonthAction);
+        modal.addBtnForm.addEventListener('click', () => openSubtaskModal(true));
+        modal.confirmBtn.addEventListener('click', handleAddSubtask);
+        modal.cancelBtn.addEventListener('click', closeSubtaskModal);
+        modal.input.addEventListener('keydown', e => { if (e.key === 'Enter') handleAddSubtask(); });
+        inputs.immersiveModeSwitch.addEventListener('change', () => toggleImmersiveMode());
+        document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement) { inputs.immersiveModeSwitch.checked = false; localStorage.setItem('fluir-immersive', false); }});
+        buttons.toggleCompleted.addEventListener('click', (e) => { const isHidden = containers.completedTasks.classList.toggle('hidden'); e.target.textContent = isHidden ? 'Mostrar' : 'Ocultar'; });
+        
+        // --- INITIALIZATION ---
+        function init() {
+            const savedTheme = localStorage.getItem('fluir-theme') || 'default-light';
+            containers.themeSelector.innerHTML = themes.map(theme => `<div class="flex items-center gap-2"><input type="radio" id="theme-${theme.id}" name="theme" value="${theme.id}" class="custom-checkbox" ${savedTheme === theme.id ? 'checked' : ''}><label for="theme-${theme.id}" class="font-bold">${theme.name}</label></div>`).join('');
+            applyTheme(savedTheme);
+            containers.themeSelector.addEventListener('change', e => applyTheme(e.target.value));
+            const isImmersive = localStorage.getItem('fluir-immersive') === 'true';
+            if(isImmersive) toggleImmersiveMode(true);
+            if (!localStorage.getItem('fluir-visited')) { setTimeout(() => { splashScreen.classList.add('is-fading'); setTimeout(() => { splashScreen.style.display = 'none'; }, 500); }, 1500); } else { splashScreen.style.display = 'none'; }
+            loadData();
+            if (localStorage.getItem('fluir-visited')) { renderDashboard(); views.welcome.classList.remove('active'); views.dashboard.classList.add('active'); state.currentView = 'dashboard'; updateMobileNavActiveState('dashboard'); } else { localStorage.setItem('fluir-visited', 'true'); }
+        }
+        
+        init();
+    });
+    </script>
+</body>
+</html>
